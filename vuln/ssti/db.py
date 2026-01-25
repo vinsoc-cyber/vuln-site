@@ -1,8 +1,9 @@
+import os
 import sqlite3
 
 from flask import g
 
-DATABASE = ":memory:"
+DATABASE = os.environ.get("SSTI_DB_PATH", "/tmp/ssti.db")
 
 
 def get_db():

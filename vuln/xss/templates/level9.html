@@ -12,6 +12,7 @@
     </div>
 </div>
 
+{% raw %}
 <script>
     function parseTemplate() {
         var hash = decodeURIComponent(window.location.hash.substring(1));
@@ -37,4 +38,5 @@
 
     window.addEventListener('hashchange', parseTemplate);
 </script>
+{% endraw %}
 {% endblock %}

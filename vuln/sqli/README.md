@@ -176,10 +176,10 @@ Explanation: Deletes every row by forcing the WHERE clause to always be true.
 Goal: Expose the flag from inside a nested SELECT.
 Payload (ref):
 ```
-' UNION SELECT flag FROM secrets--
+' UNION SELECT flag FROM secrets WHERE '1'='1
 ```
 
-Explanation: The injected UNION runs inside the subquery and returns the flag.
+Explanation: Closes the string and unions the secrets table; the trailing WHERE keeps the subquery balanced without comments.
 
 ## Level 19: Encoded Filter (Base64 Bypass)
 

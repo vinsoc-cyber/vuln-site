@@ -541,14 +541,14 @@ if not re.match(r'^[a-zA-Z_$][a-zA-Z0-9_$]*$', callback):
 
 ### Level 11: Entity Decoder (Double Decode) 🟡 Medium
 
-**URL**: `http://localhost/level11?q=%26lt%3Bimg%20src%3Dx%20onerror%3Dalert(1)%26gt%3B`
+**URL**: `http://localhost/level11?q=%3Cimg%20src%3Dx%20onerror%3Dalert(1)%3E`
 
 **Vulnerability Type**: Reflected XSS (entity decode mistake)
 
 **How it Works**: Input is escaped, then immediately unescaped and rendered as HTML.
 
 **Successful Payloads**:
-- `&lt;img src=x onerror=alert(1)&gt;`
+- `<img src=x onerror=alert(1)>`
 - `<svg onload=alert(1)>`
 
 **Remediation**: Never unescape already-escaped output before rendering.

@@ -202,9 +202,8 @@ rendered_output = render_template_string(template_code, **context_vars)
 
 **Exploitation:**
 - `{{ helper('ping') }}` → Normal output
-- `{{ helper.__globals__.keys()|length }}` → Count module globals
-- `{{ helper.__globals__['app'].name }}` → Flask app name
-- `{{ helper.__globals__['request'].method }}` → Request method
+- `{{ helper.__globals__ }}` → Dump module globals (includes request/config)
+- `{{ helper.__globals__.keys() }}` → List available globals in module context
 
 **Learning Objective:** Learn how exposed callables can leak broader application context.
 
@@ -375,7 +374,7 @@ template = "{% set msg = '" + msg + "' %}Message: {{ msg }}"
 ```
 
 **Exploitation:**
-- Input: `x' %}{{ flag }}{%` → Break out of string and execute template
+- Input: `x' %}{{ flag }}{% set msg = 'y` → Break out of string and keep template valid
 
 **Learning Objective:** Understand statement breakout payloads.
 
