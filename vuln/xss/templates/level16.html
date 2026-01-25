@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <h2 class="text-2xl text-cyan-400 mb-4">Deferred Command</h2>
+    <form method="GET" class="flex gap-2 mb-6">
+        <input name="cmd" value="{{ cmd }}" class="flex-1 p-2 bg-slate-900 border-cyan-700" placeholder="console.log('ok')">
+        <button class="bg-cyan-600 text-white px-6 font-bold">SCHEDULE</button>
+    </form>
+
+    <div class="text-slate-500 text-sm">Command will execute after a short delay.</div>
+</div>
+
+<script>
+    var cmd = "{{ cmd }}";
+    setTimeout(cmd, 200);
+</script>
+{% endblock %}

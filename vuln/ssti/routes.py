@@ -1,4 +1,5 @@
 import time
+from types import SimpleNamespace
 
 from flask import current_app, redirect, render_template, render_template_string, request
 
@@ -15,6 +16,16 @@ TITLES = [
     "Helper Exposure",
     "Stored Template",
     "Blacklist Renderer",
+    "Debug Renderer",
+    "Key Splitter",
+    "Dotless Vault",
+    "Bracketless Getter",
+    "Double Render",
+    "Macro Lab",
+    "Statement Breakout",
+    "Index Escape",
+    "Attribute Mapper",
+    "Chain Bypass",
 ]
 
 
@@ -384,4 +395,275 @@ def register_routes(app):
             "level10.html",
             input_data=input_data,
             processed_result=processed_result,
+        )
+
+    @app.route("/level11", methods=["GET", "POST"])
+    def level11():
+        template_input = request.form.get("template", "") if request.method == "POST" else request.args.get("template", "")
+        rendered_output = ""
+        success_detected = False
+        flag = "FLAG{SSTI_DEBUG_RENDER}"
+
+        if template_input:
+            try:
+                rendered_output = render_template_string(template_input, user="Guest", flag=flag)
+                if "FLAG" in rendered_output:
+                    success_detected = True
+            except Exception as e:
+                rendered_output = f"Error: {str(e)}"
+
+        return render_page(
+            11,
+            "Debug renderer active.",
+            "level11.html",
+            template_input=template_input,
+            rendered_output=rendered_output,
+            success_detected=success_detected,
+        )
+
+    @app.route("/level12", methods=["GET", "POST"])
+    def level12():
+        template_input = request.form.get("template", "") if request.method == "POST" else request.args.get("template", "")
+        rendered_output = ""
+        success_detected = False
+        flag = "FLAG{SSTI_KEY_SPLIT}"
+        context = {"flag": flag, "user": "Guest"}
+
+        if template_input:
+            if "flag" in template_input.lower():
+                rendered_output = "[BLOCKED] Keyword detected"
+            else:
+                try:
+                    rendered_output = render_template_string(template_input, context=context)
+                    if "FLAG" in rendered_output:
+                        success_detected = True
+                except Exception as e:
+                    rendered_output = f"Error: {str(e)}"
+
+        return render_page(
+            12,
+            "Key splitter active.",
+            "level12.html",
+            template_input=template_input,
+            rendered_output=rendered_output,
+            success_detected=success_detected,
+        )
+
+    @app.route("/level13", methods=["GET", "POST"])
+    def level13():
+        expr = request.form.get("expr", "") if request.method == "POST" else request.args.get("expr", "")
+        rendered_output = ""
+        success_detected = False
+        flag = "FLAG{SSTI_ATTR}"
+        vault = SimpleNamespace(flag=flag, label="Vault")
+
+        if expr:
+            filtered = expr.replace(".", "")
+            try:
+                rendered_output = render_template_string(filtered, vault=vault)
+                if "FLAG" in rendered_output:
+                    success_detected = True
+            except Exception as e:
+                rendered_output = f"Error: {str(e)}"
+
+        return render_page(
+            13,
+            "Dotless vault active.",
+            "level13.html",
+            expr=expr,
+            rendered_output=rendered_output,
+            success_detected=success_detected,
+        )
+
+    @app.route("/level14", methods=["GET", "POST"])
+    def level14():
+        expr = request.form.get("expr", "") if request.method == "POST" else request.args.get("expr", "")
+        rendered_output = ""
+        success_detected = False
+        flag = "FLAG{SSTI_GETTER}"
+        data = {"flag": flag, "user": "Guest"}
+
+        if expr:
+            if "flag" in expr.lower():
+                rendered_output = "[BLOCKED] Keyword detected"
+            else:
+                filtered = expr.replace("[", "").replace("]", "")
+                try:
+                    rendered_output = render_template_string(filtered, data=data)
+                    if "FLAG" in rendered_output:
+                        success_detected = True
+                except Exception as e:
+                    rendered_output = f"Error: {str(e)}"
+
+        return render_page(
+            14,
+            "Bracketless getter active.",
+            "level14.html",
+            expr=expr,
+            rendered_output=rendered_output,
+            success_detected=success_detected,
+        )
+
+    @app.route("/level15", methods=["GET", "POST"])
+    def level15():
+        template_input = request.form.get("template", "") if request.method == "POST" else request.args.get("template", "")
+        rendered_output = ""
+        success_detected = False
+        flag = "FLAG{SSTI_DOUBLE_RENDER}"
+
+        if template_input:
+            try:
+                stage_one = render_template_string(template_input)
+                rendered_output = render_template_string(stage_one, flag=flag)
+                if "FLAG" in rendered_output:
+                    success_detected = True
+            except Exception as e:
+                rendered_output = f"Error: {str(e)}"
+
+        return render_page(
+            15,
+            "Double render active.",
+            "level15.html",
+            template_input=template_input,
+            rendered_output=rendered_output,
+            success_detected=success_detected,
+        )
+
+    @app.route("/level16", methods=["GET", "POST"])
+    def level16():
+        macro_body = request.form.get("macro", "") if request.method == "POST" else request.args.get("macro", "")
+        rendered_output = ""
+        success_detected = False
+        flag = "FLAG{SSTI_MACRO}"
+
+        if macro_body:
+            template = (
+                "{% macro report(user) %}"
+                + macro_body
+                + "{% endmacro %}"
+                + "{{ report('guest') }}"
+            )
+            try:
+                rendered_output = render_template_string(template, flag=flag, user="Guest")
+                if "FLAG" in rendered_output:
+                    success_detected = True
+            except Exception as e:
+                rendered_output = f"Error: {str(e)}"
+
+        return render_page(
+            16,
+            "Macro lab active.",
+            "level16.html",
+            macro_body=macro_body,
+            rendered_output=rendered_output,
+            success_detected=success_detected,
+        )
+
+    @app.route("/level17")
+    def level17():
+        msg = request.args.get("msg", "Hello")
+        rendered_output = ""
+        success_detected = False
+        flag = "FLAG{SSTI_BREAKOUT}"
+
+        template = "{% set msg = '" + msg + "' %}Message: {{ msg }}"
+        try:
+            rendered_output = render_template_string(template, flag=flag)
+            if "FLAG" in rendered_output:
+                success_detected = True
+        except Exception as e:
+            rendered_output = f"Error: {str(e)}"
+
+        return render_page(
+            17,
+            "Statement breakout active.",
+            "level17.html",
+            msg=msg,
+            rendered_output=rendered_output,
+            success_detected=success_detected,
+        )
+
+    @app.route("/level18", methods=["GET", "POST"])
+    def level18():
+        expr = request.form.get("expr", "") if request.method == "POST" else request.args.get("expr", "")
+        rendered_output = ""
+        success_detected = False
+        flags = ["EMPTY", "FLAG{SSTI_INDEX}"]
+
+        if expr:
+            if any(ch.isdigit() for ch in expr):
+                rendered_output = "[BLOCKED] Digits not allowed"
+            else:
+                try:
+                    rendered_output = render_template_string(expr, flags=flags)
+                    if "FLAG" in rendered_output:
+                        success_detected = True
+                except Exception as e:
+                    rendered_output = f"Error: {str(e)}"
+
+        return render_page(
+            18,
+            "Index escape active.",
+            "level18.html",
+            expr=expr,
+            rendered_output=rendered_output,
+            success_detected=success_detected,
+        )
+
+    @app.route("/level19", methods=["GET", "POST"])
+    def level19():
+        expr = request.form.get("expr", "") if request.method == "POST" else request.args.get("expr", "")
+        rendered_output = ""
+        success_detected = False
+        flag = "FLAG{SSTI_MAP}"
+        users = [SimpleNamespace(name="Guest", flag=flag), SimpleNamespace(name="User", flag="redacted")]
+
+        if expr:
+            if "flag" in expr.lower():
+                rendered_output = "[BLOCKED] Keyword detected"
+            else:
+                filtered = expr.replace(".", "")
+                try:
+                    rendered_output = render_template_string(filtered, users=users)
+                    if "FLAG" in rendered_output:
+                        success_detected = True
+                except Exception as e:
+                    rendered_output = f"Error: {str(e)}"
+
+        return render_page(
+            19,
+            "Attribute mapper active.",
+            "level19.html",
+            expr=expr,
+            rendered_output=rendered_output,
+            success_detected=success_detected,
+        )
+
+    @app.route("/level20", methods=["GET", "POST"])
+    def level20():
+        expr = request.form.get("expr", "") if request.method == "POST" else request.args.get("expr", "")
+        rendered_output = ""
+        success_detected = False
+        flag = "FLAG{SSTI_CHAIN}"
+        store = {"flag": flag, "note": "ok"}
+
+        if expr:
+            blocked = any(token in expr for token in ["flag", ".", "[", "]"])
+            if blocked:
+                rendered_output = "[BLOCKED] Restricted patterns detected"
+            else:
+                try:
+                    rendered_output = render_template_string(expr, store=store)
+                    if "FLAG" in rendered_output:
+                        success_detected = True
+                except Exception as e:
+                    rendered_output = f"Error: {str(e)}"
+
+        return render_page(
+            20,
+            "Chain bypass active.",
+            "level20.html",
+            expr=expr,
+            rendered_output=rendered_output,
+            success_detected=success_detected,
         )

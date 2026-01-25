@@ -22,9 +22,13 @@ def get_db():
 
 def init_db(db):
     c = db.cursor()
-    c.execute("""CREATE TABLE users (id INTEGER PRIMARY KEY, username TEXT, password TEXT, role TEXT)""")
-    c.execute("INSERT INTO users (username, password, role) VALUES ('admin', 's3cr3t_P@ssw0rd', 'admin')")
-    c.execute("INSERT INTO users (username, password, role) VALUES ('user', '123456', 'user')")
+    c.execute(
+        """CREATE TABLE users (id INTEGER PRIMARY KEY, username TEXT, password TEXT, role TEXT, status TEXT)"""
+    )
+    c.execute(
+        "INSERT INTO users (username, password, role, status) VALUES ('admin', 's3cr3t_P@ssw0rd', 'admin', 'active')"
+    )
+    c.execute("INSERT INTO users (username, password, role, status) VALUES ('user', '123456', 'user', 'active')")
 
     c.execute("""CREATE TABLE products (id INTEGER PRIMARY KEY, name TEXT, price INTEGER, description TEXT)""")
     c.execute("INSERT INTO products (name, price, description) VALUES ('Quantum Core', 500, 'Powerful CPU')")
@@ -33,6 +37,11 @@ def init_db(db):
 
     c.execute("""CREATE TABLE secrets (id INTEGER PRIMARY KEY, flag TEXT)""")
     c.execute("INSERT INTO secrets (flag) VALUES ('FLAG{SQLI_MASTER_CLASS}')")
+
+    c.execute("""CREATE TABLE audit_logs (id INTEGER PRIMARY KEY, event TEXT, severity TEXT)""")
+    c.execute("INSERT INTO audit_logs (event, severity) VALUES ('login-fail', 'low')")
+    c.execute("INSERT INTO audit_logs (event, severity) VALUES ('policy-change', 'medium')")
+    c.execute("INSERT INTO audit_logs (event, severity) VALUES ('admin-access', 'high')")
 
     db.commit()
 

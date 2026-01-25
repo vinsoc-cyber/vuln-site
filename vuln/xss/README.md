@@ -2,7 +2,7 @@
 
 ## Overview
 
-This educational web application contains **10 progressive XSS vulnerability challenges** designed to help students understand Cross-Site Scripting (XSS) attacks, from basic reflected XSS to advanced Content Security Policy (CSP) bypasses. Each level demonstrates a different type of XSS vulnerability with various security controls that can be bypassed.
+This educational web application contains **20 progressive XSS vulnerability challenges** designed to help students understand Cross-Site Scripting (XSS) attacks, from basic reflected XSS to advanced client-side and CSP bypasses. Each level demonstrates a different type of XSS vulnerability with various security controls that can be bypassed.
 
 **Application Details:**
 - **Framework**: Flask (Python)
@@ -16,7 +16,7 @@ This educational web application contains **10 progressive XSS vulnerability cha
 ## How to Use This Guide
 
 1. **Start the Application**: `python vuln_xss.py`
-2. **Navigate** through levels 1-10 in order
+2. **Navigate** through levels 1-20 in order
 3. **Read** each vulnerability description
 4. **Try the suggested payloads** to understand the attack
 5. **Study the source code** to see how the vulnerability works
@@ -538,6 +538,134 @@ import re
 if not re.match(r'^[a-zA-Z_$][a-zA-Z0-9_$]*$', callback):
     callback = 'callback'
 ```
+
+### Level 11: Entity Decoder (Double Decode) 🟡 Medium
+
+**URL**: `http://localhost/level11?q=%26lt%3Bimg%20src%3Dx%20onerror%3Dalert(1)%26gt%3B`
+
+**Vulnerability Type**: Reflected XSS (entity decode mistake)
+
+**How it Works**: Input is escaped, then immediately unescaped and rendered as HTML.
+
+**Successful Payloads**:
+- `&lt;img src=x onerror=alert(1)&gt;`
+- `<svg onload=alert(1)>`
+
+**Remediation**: Never unescape already-escaped output before rendering.
+
+---
+
+### Level 12: Guestbook Sanitizer (Allowlist Bypass) 🟠 Hard
+
+**URL**: `http://localhost/level12`
+
+**Vulnerability Type**: Stored XSS (weak allowlist sanitizer)
+
+**How it Works**: The sanitizer removes disallowed tags but allows attributes on allowed tags.
+
+**Successful Payloads**:
+- `<a href="#" onclick="alert(1)">Click</a>`
+- `<b onmouseover=alert(1)>Hover</b>`
+
+**Remediation**: Strip all event attributes or use a real HTML sanitizer.
+
+---
+
+### Level 13: DOM Stream (insertAdjacentHTML) 🟡 Medium
+
+**URL**: `http://localhost/level13?msg=<img src=x onerror=alert(1)>`
+
+**Vulnerability Type**: DOM-based XSS
+
+**How it Works**: Query parameter is inserted directly into the DOM as HTML.
+
+**Remediation**: Use `textContent` or sanitize before insertion.
+
+---
+
+### Level 14: Template Literal Injection 🟠 Hard
+
+**URL**: `http://localhost/level14?name=${alert(1)}`
+
+**Vulnerability Type**: JavaScript template literal injection
+
+**How it Works**: User input becomes part of a template literal and executes inside `${}`.
+
+**Remediation**: Avoid template literals with untrusted input or escape `${`.
+
+---
+
+### Level 15: Script Breakout (JSON Context) 🟠 Hard
+
+**URL**: `http://localhost/level15?title=%3C%2Fscript%3E%3Cscript%3Ealert(1)%3C%2Fscript%3E`
+
+**Vulnerability Type**: Script tag breakout
+
+**How it Works**: Input is injected into a script tag without HTML escaping.
+
+**Remediation**: Use JSON encoding and never render raw into `<script>`.
+
+---
+
+### Level 16: Deferred Command (setTimeout) 🟡 Medium
+
+**URL**: `http://localhost/level16?cmd=alert(1)`
+
+**Vulnerability Type**: JavaScript string execution
+
+**How it Works**: `setTimeout()` executes a string supplied by the user.
+
+**Remediation**: Pass a function to `setTimeout`, never a string.
+
+---
+
+### Level 17: Embedded Doc (srcdoc) 🟠 Hard
+
+**URL**: `http://localhost/level17?doc=<img src=x onerror=alert(1)>`
+
+**Vulnerability Type**: Reflected XSS in iframe srcdoc
+
+**How it Works**: Script filtering only removes `<script>` tags, allowing event handlers.
+
+**Remediation**: Escape or sanitize srcdoc content.
+
+---
+
+### Level 18: Eval Console 🟡 Medium
+
+**URL**: `http://localhost/level18?calc=alert(1)`
+
+**Vulnerability Type**: DOM-based XSS (eval)
+
+**How it Works**: User input is executed by `eval()` on the client side.
+
+**Remediation**: Remove `eval` and use safe parsers.
+
+---
+
+### Level 19: Protocol Filter Bypass 🔴 Expert
+
+**URL**: `http://localhost/level19?link=java%0Ascript:alert(1)`
+
+**Vulnerability Type**: Filter bypass via decoding
+
+**How it Works**: The filter inspects the raw URL, then decodes and renders it.
+
+**Remediation**: Normalize inputs before filtering and block dangerous schemes.
+
+---
+
+### Level 20: LocalStorage Vault (Client-Side Stored XSS) 🔴 Expert
+
+**URL**: `http://localhost/level20`
+
+**Vulnerability Type**: DOM-based stored XSS (localStorage)
+
+**How it Works**: User content is stored in localStorage and rendered with `innerHTML`.
+
+**Payload**: Save `<img src=x onerror=alert(1)>` and click Load.
+
+**Remediation**: Store safe data and render with `textContent`.
 
 ---
 

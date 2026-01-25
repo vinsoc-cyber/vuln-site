@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <h2 class="text-2xl text-cyan-400 mb-4">Entity Decoder</h2>
+    <form method="GET" class="flex gap-2">
+        <input name="q" value="{{ query }}" class="flex-1 p-2 bg-slate-900 border-cyan-700" placeholder="Enter encoded text">
+        <button class="bg-cyan-600 text-white px-6 font-bold">DECODE</button>
+    </form>
+
+    <div class="mt-6 border border-cyan-900/50 bg-slate-900/40 p-4">
+        <div class="text-xs text-cyan-600 font-mono mb-2">Preview</div>
+        <div class="text-white text-xl break-words">{{ preview|safe }}</div>
+    </div>
+</div>
+{% endblock %}

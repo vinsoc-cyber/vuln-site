@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <div class="text-amber-400 text-sm mb-4 mono-font">Signup service</div>
+    <form method="POST" class="flex gap-2">
+        <input name="username" value="{{ username }}" class="flex-1 p-2 bg-slate-900 border-amber-800" placeholder="new username">
+        <button class="bg-amber-600 px-4 font-bold text-black">REGISTER</button>
+    </form>
+
+    {% if msg %}
+    <div class="mt-4 text-amber-200 mono-font">{{ msg }}</div>
+    {% endif %}
+
+    <div class="mt-6">
+        <div class="text-amber-400 text-xs mono-font mb-2">Recent users</div>
+        <ul class="space-y-2 text-amber-200 mono-font">
+            {% for user in recent_users %}
+            <li class="p-2 bg-slate-900/50 border border-amber-900/40">{{ user[0] }} :: {{ user[1] }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    {% if success_detected %}
+    <div class="mt-6 p-4 border-2 border-green-500 bg-green-900/30 text-green-400 font-bold text-xl animate-pulse">
+        CONGRATULATIONS! Admin account created via INSERT injection.
+    </div>
+    {% endif %}
+
+    {% if query_log %}
+    <div class="mt-4 text-xs text-slate-500 mono-font">SQL: {{ query_log }}</div>
+    {% endif %}
+</div>
+{% endblock %}

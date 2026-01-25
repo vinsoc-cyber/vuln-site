@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <div class="text-amber-400 text-sm mb-4 mono-font">Ranking engine expression</div>
+    <form method="GET" class="flex gap-2">
+        <input name="rank" value="{{ rank_expr }}" class="flex-1 p-2 bg-slate-900 border-amber-800" placeholder="price * 2">
+        <button class="bg-amber-600 px-4 font-bold text-black">RUN</button>
+    </form>
+
+    {% if error_msg %}
+    <div class="mt-4 text-red-400 mono-font">{{ error_msg }}</div>
+    {% endif %}
+
+    {% if rows %}
+    <div class="mt-6 overflow-x-auto">
+        <table class="w-full text-left text-sm mono-font">
+            <thead class="text-amber-400">
+                <tr>
+                    <th class="py-2 pr-4">Name</th>
+                    <th class="py-2 pr-4">Price</th>
+                    <th class="py-2 pr-4">Score</th>
+                </tr>
+            </thead>
+            <tbody class="text-amber-200">
+                {% for row in rows %}
+                <tr class="border-t border-amber-900/40">
+                    <td class="py-2 pr-4">{{ row[0] }}</td>
+                    <td class="py-2 pr-4">{{ row[1] }}</td>
+                    <td class="py-2 pr-4">{{ row[2] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    {% if success_detected %}
+    <div class="mt-6 p-4 border-2 border-green-500 bg-green-900/30 text-green-400 font-bold text-xl animate-pulse">
+        CONGRATULATIONS! Rank expression leaked protected data.
+    </div>
+    {% endif %}
+
+    {% if query_log %}
+    <div class="mt-4 text-xs text-slate-500 mono-font">SQL: {{ query_log }}</div>
+    {% endif %}
+</div>
+{% endblock %}

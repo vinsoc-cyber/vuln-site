@@ -5,6 +5,7 @@ def init_db():
     conn = sqlite3.connect(":memory:", check_same_thread=False)
     c = conn.cursor()
     c.execute("""CREATE TABLE comments (id INTEGER PRIMARY KEY AUTOINCREMENT, content TEXT)""")
+    c.execute("""CREATE TABLE guestbook (id INTEGER PRIMARY KEY AUTOINCREMENT, content TEXT)""")
     conn.commit()
     return conn
 

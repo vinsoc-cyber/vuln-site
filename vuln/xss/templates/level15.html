@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <h2 class="text-2xl text-cyan-400 mb-4">Script Breakout</h2>
+    <form method="GET" class="flex gap-2 mb-6">
+        <input name="title" value="{{ title }}" class="flex-1 p-2 bg-slate-900 border-cyan-700" placeholder="Profile title">
+        <button class="bg-cyan-600 text-white px-6 font-bold">UPDATE</button>
+    </form>
+
+    <div class="bg-slate-900/50 border border-cyan-900/40 p-4">
+        <div class="text-xs text-cyan-600 font-mono mb-2">Profile Display</div>
+        <div id="profile" class="text-white text-xl">Loading...</div>
+    </div>
+</div>
+
+<script>
+    var profile = {"title": "{{ title|safe }}"};
+    document.getElementById('profile').innerText = profile.title;
+</script>
+{% endblock %}

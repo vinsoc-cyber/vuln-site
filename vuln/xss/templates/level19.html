@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <h2 class="text-2xl text-cyan-400 mb-4">Protocol Filter</h2>
+    <form method="GET" class="flex gap-2 mb-6">
+        <input name="link" value="{{ link }}" class="flex-1 p-2 bg-slate-900 border-cyan-700" placeholder="https://example.com">
+        <button class="bg-cyan-600 text-white px-6 font-bold">CHECK</button>
+    </form>
+
+    {% if blocked %}
+    <div class="text-red-400 text-sm">Blocked by protocol filter.</div>
+    {% else %}
+    <div class="text-slate-500 text-sm mb-2">Verified link:</div>
+    <a class="text-cyan-300 underline" href="{{ decoded|safe }}">{{ decoded }}</a>
+    {% endif %}
+</div>
+{% endblock %}

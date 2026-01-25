@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <h2 class="text-2xl text-cyan-400 mb-4">LocalStorage Vault</h2>
+    <div class="flex gap-2 mb-4">
+        <input id="note" class="flex-1 p-2 bg-slate-900 border-cyan-700" placeholder="Store message">
+        <button id="save" class="bg-cyan-600 text-white px-6 font-bold">SAVE</button>
+        <button id="load" class="bg-slate-700 text-white px-6 font-bold">LOAD</button>
+    </div>
+
+    <div class="bg-slate-900/50 border border-cyan-900/40 p-4">
+        <div class="text-xs text-cyan-600 font-mono mb-2">Vault Output</div>
+        <div id="output" class="text-white text-xl">Empty</div>
+    </div>
+</div>
+
+<script>
+    var input = document.getElementById('note');
+    var output = document.getElementById('output');
+
+    document.getElementById('save').addEventListener('click', function() {
+        localStorage.setItem('vault_note', input.value);
+        output.innerHTML = 'Saved.';
+    });
+
+    document.getElementById('load').addEventListener('click', function() {
+        var saved = localStorage.getItem('vault_note') || '';
+        output.innerHTML = saved;
+    });
+</script>
+{% endblock %}

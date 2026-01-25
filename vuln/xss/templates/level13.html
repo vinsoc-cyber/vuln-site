@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <h2 class="text-2xl text-cyan-400 mb-4">DOM Stream</h2>
+    <div class="text-sm text-slate-500 mb-4">Stream events are rendered directly from the URL.</div>
+    <div id="stream" class="space-y-2"></div>
+
+    <div class="mt-6 text-slate-500 text-sm">Try: <span class="font-mono text-cyan-400">?msg=&lt;img src=x onerror=alert(1)&gt;</span></div>
+</div>
+
+<script>
+    var params = new URLSearchParams(window.location.search);
+    var msg = params.get('msg') || 'stream ready';
+    var stream = document.getElementById('stream');
+    stream.insertAdjacentHTML('beforeend', '<div class="p-3 bg-slate-900/50 border border-cyan-900/40 text-white">' + msg + '</div>');
+</script>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <h2 class="text-2xl text-red-400 mb-4">Debug Renderer</h2>
+    <form method="POST" class="mb-6">
+        <textarea name="template" class="w-full p-4 h-28 bg-slate-900 border-red-800 font-mono text-sm" placeholder="{{ flag }}">{{ template_input }}</textarea>
+        <button class="mt-3 bg-red-700 hover:bg-red-600 px-8 py-3 text-white font-bold w-full">RENDER</button>
+    </form>
+
+    {% if rendered_output %}
+    <div class="bg-black/50 border border-red-900 p-6 rounded-lg">
+        <div class="text-red-600 text-xs font-mono mb-3">// OUTPUT</div>
+        <div class="text-white">{{ rendered_output }}</div>
+    </div>
+    {% endif %}
+
+    {% if success_detected %}
+    <div class="mt-6 p-4 border-2 border-green-500 bg-green-900/30 text-green-400 font-bold text-xl animate-pulse">
+        CONGRATULATIONS! Flag extracted from debug context.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

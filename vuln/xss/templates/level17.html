@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <h2 class="text-2xl text-cyan-400 mb-4">Embedded Document</h2>
+    <form method="GET" class="flex gap-2 mb-6">
+        <input name="doc" value="{{ doc }}" class="flex-1 p-2 bg-slate-900 border-cyan-700" placeholder="HTML for srcdoc">
+        <button class="bg-cyan-600 text-white px-6 font-bold">LOAD</button>
+    </form>
+
+    <iframe class="w-full h-64 border border-cyan-900/40 bg-black" srcdoc="{{ doc|safe }}"></iframe>
+</div>
+{% endblock %}

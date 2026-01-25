@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <h2 class="text-2xl text-cyan-400 mb-4">Eval Console</h2>
+    <div class="bg-slate-900/50 border border-cyan-900/40 p-4">
+        <div class="text-xs text-cyan-600 font-mono mb-2">Result</div>
+        <div id="result" class="text-white text-xl">Waiting...</div>
+    </div>
+
+    <div class="mt-6 text-slate-500 text-sm">Try: <span class="font-mono text-cyan-400">?calc=alert(1)</span></div>
+</div>
+
+<script>
+    var params = new URLSearchParams(window.location.search);
+    var expr = params.get('calc') || '1 + 1';
+    var output = eval(expr);
+    document.getElementById('result').innerText = output;
+</script>
+{% endblock %}

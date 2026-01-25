@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <div class="text-amber-400 text-sm mb-4 mono-font">Profile status update</div>
+    <form method="POST" class="grid grid-cols-1 md:grid-cols-3 gap-2">
+        <input name="username" value="{{ username }}" class="p-2 bg-slate-900 border-amber-800" placeholder="username">
+        <input name="status" value="{{ status }}" class="p-2 bg-slate-900 border-amber-800" placeholder="status">
+        <button class="bg-amber-600 px-4 font-bold text-black">UPDATE</button>
+    </form>
+
+    {% if msg %}
+    <div class="mt-4 text-amber-200 mono-font">{{ msg }}</div>
+    {% endif %}
+
+    {% if user_row %}
+    <div class="mt-6 p-4 bg-slate-900/50 border border-amber-900/40 mono-font">
+        <div class="text-amber-400">Tracked user</div>
+        <div class="text-amber-200">username: {{ user_row['username'] }}</div>
+        <div class="text-amber-200">role: {{ user_row['role'] }}</div>
+        <div class="text-amber-200">status: {{ user_row['status'] }}</div>
+    </div>
+    {% endif %}
+
+    {% if success_detected %}
+    <div class="mt-6 p-4 border-2 border-green-500 bg-green-900/30 text-green-400 font-bold text-xl animate-pulse">
+        CONGRATULATIONS! Role escalation via UPDATE injection achieved.
+    </div>
+    {% endif %}
+
+    {% if query_log %}
+    <div class="mt-4 text-xs text-slate-500 mono-font">SQL: {{ query_log }}</div>
+    {% endif %}
+</div>
+{% endblock %}
