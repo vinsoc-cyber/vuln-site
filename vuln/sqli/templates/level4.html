@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="text-center max-w-lg mx-auto">
+    <h2 class="text-xl mb-6 text-amber-300">USER LOOKUP</h2>
+    <form method="GET" class="mb-8">
+        <input name="uuid" value="{{ id_param }}" class="w-full p-2 text-center bg-slate-900 border-amber-800" placeholder="Enter ID">
+        <button class="bg-amber-700 px-4 py-2 font-bold text-black mt-2 w-full">CHECK</button>
+    </form>
+
+    {% if success_signal %}
+    <div class="mb-4 p-4 border-2 border-green-500 bg-green-900/30 text-green-400 font-bold text-xl animate-pulse">
+        [+] SYSTEM ANOMALY DETECTED<br>System returned a diagnostic error.<br><br> CONGRATULATIONS! Error-based SQL Injection successful! 
+    </div>
+    {% endif %}
+
+    {% if error_msg %}
+    <div class="p-4 border border-red-500 bg-red-900/20 text-red-400 font-mono text-left">
+        <div class="font-bold border-b border-red-500/50 mb-2">SYSTEM_LOG:</div>
+        {{ error_msg }}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

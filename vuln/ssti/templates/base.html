@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Template Rendering System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Source+Code+Pro:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Rajdhani', sans-serif; background-color: #020617; color: #f87171; background-image: linear-gradient(rgba(239, 68, 68, 0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(239, 68, 68, 0.08) 1px, transparent 1px); background-size: 40px 40px; }
+        .mono-font { font-family: 'Source Code Pro', monospace; }
+        .holo-text { text-shadow: 0 0 8px #ef4444, 0 0 15px #ef4444; }
+        .holo-box { background: rgba(69, 10, 10, 0.6); border: 1px solid #ef4444; box-shadow: 0 0 20px rgba(239, 68, 68, 0.25), inset 0 0 25px rgba(239, 68, 68, 0.12); backdrop-filter: blur(4px); }
+        input, textarea, select { background-color: #0f172a; color: #fca5a5; border: 1px solid #991b1b; font-family: 'Source Code Pro', monospace; }
+        input:focus, textarea:focus, select:focus { outline: none; border-color: #ef4444; box-shadow: 0 0 12px #ef4444; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #020617; }
+        ::-webkit-scrollbar-thumb { background: #b91c1c; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #ef4444; }
+        .scan-line { width: 100%; height: 2px; background: rgba(239, 68, 68, 0.4); animation: scan 3s linear infinite; }
+        @keyframes scan { 0% { transform: translateY(0); opacity: 0; } 50% { opacity: 1; } 100% { transform: translateY(400px); opacity: 0; } }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="min-h-screen flex flex-col overflow-x-hidden">
+    <nav class="bg-slate-950/90 border-b border-red-900 p-4 sticky top-0 z-50 backdrop-blur-md">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="/" class="text-3xl font-bold holo-text tracking-widest flex items-center gap-2">
+                [TEMPLATE_SYS]
+            </a>
+            <div class="space-x-6 text-sm flex items-center font-bold">
+                <span class="text-red-600 uppercase tracking-widest">ENGINE: <span class="text-red-400">ACTIVE</span></span>
+                <a href="/reset" class="text-red-400 hover:text-red-200 border border-red-900/50 bg-red-900/20 px-4 py-1 rounded transition-all hover:shadow-[0_0_10px_rgba(239,68,68,0.5)]">
+                    RESET
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto flex-grow flex flex-col md:flex-row mt-8 gap-6 px-4 mb-10">
+        <aside class="md:w-72 flex-shrink-0">
+            <div class="holo-box p-5 rounded-lg h-full">
+                <h3 class="text-red-300 uppercase text-sm font-bold mb-4 border-b border-red-800 pb-2 flex justify-between">
+                    <span>Template Modules</span>
+                    <span>v2.0</span>
+                </h3>
+                <div class="space-y-1">
+                {% for i in range(1, 11) %}
+                <a href="/level{{i}}" class="block px-3 py-2 text-sm rounded transition-all duration-200 mono-font
+                    {{ 'bg-red-900/50 text-white border-l-4 border-red-400 shadow-[0_0_10px_rgba(248,113,113,0.3)]' if active_level == i else 'text-slate-400 hover:text-red-200 hover:bg-red-900/20 hover:pl-4' }}">
+                    Level {{ '%02d' % i }} :: {{ titles[i-1] }}
+                </a>
+                {% endfor %}
+                </div>
+            </div>
+        </aside>
+
+        <main class="flex-1 relative">
+            <div class="mb-6">
+                <div class="flex items-end gap-4 mb-2">
+                    <h1 class="text-5xl font-bold text-white drop-shadow-[0_0_5px_rgba(255,255,255,0.5)]">{{ current_title }}</h1>
+                    <span class="text-red-600 font-mono text-xl mb-1">ID: {{ 'L%02d' % active_level }}</span>
+                </div>
+
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="text-slate-500 font-bold text-sm uppercase">Threat Level:</span>
+                    <div class="flex gap-1">
+                        {% for i in range(1, 11) %}
+                            <div class="h-2 w-4 rounded-sm {{ 'bg-red-500 shadow-[0_0_5px_#ef4444]' if i <= active_level else 'bg-slate-800' }}"></div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <p class="text-slate-300 mono-font border-l-2 border-red-600 pl-4 py-1 bg-gradient-to-r from-red-900/20 to-transparent">
+                    <span class="text-red-500 font-bold">Status:</span> {{ description }}
+                </p>
+            </div>
+
+            <div class="holo-box p-8 min-h-[400px] relative rounded-lg overflow-hidden">
+                <div class="scan-line absolute top-0 left-0 pointer-events-none opacity-20"></div>
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+    </div>
+
+    <footer class="bg-slate-950 border-t border-red-900 text-center p-6 text-slate-600 text-xs mt-auto mono-font">
+        © sondt (Administrator) // All Rights Reserved
+    </footer>
+</body>
+</html>

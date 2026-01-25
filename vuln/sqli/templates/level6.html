@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="text-center max-w-xl mx-auto">
+    <h2 class="text-2xl mb-4 text-white font-light tracking-widest">PERFORMANCE TEST</h2>
+    <form method="GET" class="flex shadow-lg">
+        <input name="q" value="{{ search }}" class="flex-1 p-3 bg-slate-900 border border-amber-900 focus:border-amber-500 transition-colors" placeholder="Enter query...">
+        <button class="bg-amber-700 hover:bg-amber-600 px-6 py-3 font-bold text-black transition-colors">EXECUTE</button>
+    </form>
+
+    <div class="mt-8 flex flex-col items-center justify-center">
+        <div class="text-xs text-slate-500 uppercase tracking-widest mb-2">Response Time</div>
+        <div class="p-4 border-2 {{ status_class }} bg-black font-mono text-3xl min-w-[150px] transition-all duration-300">
+            {{ msg }}
+        </div>
+        {% if duration > 2 %}
+        <div class="mt-4 text-green-400 font-mono text-sm animate-pulse">[!] PERFORMANCE ANOMALY DETECTED [!]</div>
+        <div class="mt-4 p-4 border-2 border-green-500 bg-green-900/30 text-green-400 font-bold text-xl animate-pulse"> CONGRATULATIONS! Time-based SQL Injection successful! </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

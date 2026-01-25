@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <div>
+        <h3 class="font-bold mb-4 text-xl text-cyan-400 border-b border-cyan-800/50 pb-2">NEW ENTRY</h3>
+        <form method="POST">
+            <textarea name="comment" class="w-full p-4 h-40 mb-4 bg-slate-900/80 rounded" placeholder="Enter message..."></textarea>
+            <button class="bg-green-600 text-white px-6 py-2 w-full font-bold hover:bg-green-500 rounded shadow-lg transition">SUBMIT</button>
+        </form>
+    </div>
+    <div class="bg-slate-950/30 p-4 rounded border border-slate-800">
+        <h3 class="font-bold mb-4 text-xl text-cyan-400 border-b border-cyan-800/50 pb-2">ENTRIES</h3>
+        <div class="h-80 overflow-y-auto pr-2 custom-scrollbar">
+            {% if comments %}
+                {% for row in comments %}
+                <div class="border-l-2 border-cyan-500 bg-slate-900/50 p-4 mb-3 text-cyan-100 break-words shadow-sm">{{ row[0]|safe }}</div>
+                {% endfor %}
+            {% else %}
+                <div class="text-slate-600 italic text-center mt-10">No entries found.</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

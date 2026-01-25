@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <div class="mb-6 text-center">
+        <h2 class="text-3xl text-red-400 font-bold mb-2">Stored Template</h2>
+        <p class="text-slate-400 text-sm">Second-order rendering from saved templates</p>
+    </div>
+
+    <form method="POST" class="space-y-4 mb-8">
+        <div>
+            <label class="block text-red-500 text-sm mb-2 font-bold">LABEL</label>
+            <input type="text" name="label" value="{{ label }}" class="w-full p-3 bg-slate-900 border-red-800 font-mono text-sm" placeholder="welcome-card">
+        </div>
+        <div>
+            <label class="block text-red-500 text-sm mb-2 font-bold">TEMPLATE BODY</label>
+            <textarea name="template" class="w-full p-4 h-28 bg-slate-900 border-red-800 font-mono text-sm" placeholder="Hello {{ user }} at {{ now }}"></textarea>
+        </div>
+        <button class="bg-red-700 hover:bg-red-600 px-8 py-3 text-white font-bold w-full">SAVE TEMPLATE</button>
+    </form>
+
+    {% if message %}
+    <div class="mb-6 text-center text-amber-300 font-mono">{{ message }}</div>
+    {% endif %}
+
+    <div class="mb-6">
+        <div class="text-red-600 text-xs font-mono mb-2">// SAVED TEMPLATES</div>
+        <div class="space-y-2">
+            {% for t in saved_templates %}
+            <a class="block px-4 py-2 bg-slate-900/70 border border-red-900 rounded text-slate-200 hover:text-white" href="/level9?id={{ t['id'] }}">
+                #{{ t['id'] }} :: {{ t['label'] }}
+            </a>
+            {% else %}
+            <div class="text-slate-500 text-sm">No templates saved yet.</div>
+            {% endfor %}
+        </div>
+    </div>
+
+    {% if rendered_output %}
+    <div class="bg-red-950/30 border border-red-800 p-6 rounded-lg">
+        <div class="text-red-600 text-xs font-mono mb-2">// RENDERED OUTPUT</div>
+        <div class="text-2xl text-white break-words">{{ rendered_output }}</div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

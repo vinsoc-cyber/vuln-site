@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+{% if blocked_msg %}
+{{ blocked_msg|safe }}
+{% else %}
+<form method="GET" class="text-center">
+    <label class="block mb-4 text-xl font-bold text-red-400">SECURITY SYSTEM ENABLED</label>
+    <div class="inline-flex shadow-lg">
+        <input type="text" name="q" class="w-96 p-3 bg-slate-900 border-red-900 text-red-200 placeholder-red-900" placeholder="Enter input...">
+        <button class="bg-red-700 px-6 py-2 text-white font-bold hover:bg-red-600">PROCESS</button>
+    </div>
+</form>
+<div class="mt-12 text-center text-2xl font-light">
+    Result: <span class="text-white">{{ final_content|safe }}</span>
+</div>
+{% endif %}
+{% endblock %}

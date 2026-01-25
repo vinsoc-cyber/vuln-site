@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="text-center py-8">
+    <h2 class="text-4xl mb-4 text-white font-light">Welcome, <span class="text-red-400">{{ name }}</span></h2>
+    <p class="text-slate-400 mb-10">Template-based name formatting</p>
+
+    <form method="GET" class="max-w-md mx-auto">
+        <label class="block text-left text-red-500 text-sm mb-2 font-bold">YOUR NAME</label>
+        <div class="flex">
+            <input name="name" value="{{ name }}" class="flex-1 p-3 bg-slate-900 border-red-800" placeholder="Guest">
+            <button class="bg-red-700 px-6 text-white font-bold ml-2">FORMAT</button>
+        </div>
+        <p class="text-xs text-slate-500 mt-2 text-left">Security filter active</p>
+    </form>
+
+    {% if formatted_name and formatted_name != name %}
+    <div class="mt-10 p-6 bg-red-950/30 border border-red-800 rounded">
+        <div class="text-red-600 text-xs uppercase mb-2">Formatted Output</div>
+        <div class="text-white text-xl font-mono break-words">{{ formatted_name }}</div>
+    </div>
+    {% endif %}
+
+    {% if success_detected %}
+    <div class="mt-6 p-4 border-2 border-green-500 bg-green-900/30 text-green-400 font-bold text-xl animate-pulse">
+        CONGRATULATIONS! Filter bypass successful!
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl text-red-400">Helper Exposure</h2>
+        <span class="text-xs text-red-600 border border-red-800 px-2 py-1">Context Mode</span>
+    </div>
+
+    <div class="mb-6 p-4 bg-slate-900/50 border border-red-900/50 rounded">
+        <div class="text-red-600 text-xs font-mono mb-2">AVAILABLE OBJECTS:</div>
+        <div class="flex flex-wrap gap-2">
+            {% for var in ['title', 'user', 'items', 'count', 'helper'] %}
+            <span class="text-xs bg-slate-800 text-red-300 px-2 py-1 font-mono">{{ var }}</span>
+            {% endfor %}
+        </div>
+    </div>
+
+    <form method="POST" class="mb-8">
+        <label class="block text-red-500 text-sm mb-2 font-bold">TEMPLATE CODE</label>
+        <textarea name="template" class="w-full p-4 h-32 bg-slate-900 border-red-800 font-mono text-sm" placeholder="{{ title }} - {{ user }}">{{ template_code }}</textarea>
+        <button class="mt-3 bg-red-700 hover:bg-red-600 px-8 py-3 text-white font-bold w-full">RENDER</button>
+    </form>
+
+    {% if rendered_output and not rendered_output.startswith('[') %}
+    <div class="bg-black/50 border border-red-900 p-6 rounded-lg">
+        <div class="text-red-600 text-xs font-mono mb-3">// RENDERED OUTPUT</div>
+        <div class="text-white">{{ rendered_output }}</div>
+    </div>
+    {% endif %}
+
+    {% if success_detected %}
+    <div class="mt-6 p-4 border-2 border-green-500 bg-green-900/30 text-green-400 font-bold text-xl animate-pulse">
+        CONGRATULATIONS! Advanced template injection successful!
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

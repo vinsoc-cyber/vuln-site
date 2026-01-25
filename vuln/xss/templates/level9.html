@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <h2 class="text-2xl text-cyan-400 mb-4">Dashboard</h2>
+    <div class="bg-slate-900 p-6 rounded border border-slate-700">
+        <div class="mb-4 text-sm text-slate-500">Welcome to your dashboard.</div>
+        <div id="display" class="text-3xl text-white font-bold">Loading...</div>
+    </div>
+
+    <div class="mt-6 text-slate-500 text-sm">
+        <p>Configuration processed from URL parameters.</p>
+    </div>
+</div>
+
+<script>
+    function parseTemplate() {
+        var hash = decodeURIComponent(window.location.hash.substring(1));
+
+        if (hash.startsWith("config=")) {
+            var config = hash.split("=")[1];
+            var template = "Config: " + config + "!";
+            var rendered = template.replace(/{{\s*(.*?)\s*}}/g, function(match, code) {
+                try { return eval(code); } catch(e) { return "ERROR"; }
+            });
+            document.getElementById('display').innerHTML = rendered;
+        }
+    }
+
+    window.addEventListener('load', function() {
+        if(!window.location.hash) {
+            window.location.hash = "#config=default";
+            parseTemplate();
+        } else {
+            parseTemplate();
+        }
+    });
+
+    window.addEventListener('hashchange', parseTemplate);
+</script>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="text-center">
+    <h2 class="text-3xl mb-6 text-white font-light">LINK MANAGER</h2>
+
+    <div class="mb-10">
+        <a href="{{ safe_link|safe }}" class="group relative inline-flex items-center justify-center px-8 py-4 font-bold text-white transition-all duration-200 bg-cyan-600 font-lg rounded hover:bg-cyan-500 hover:shadow-[0_0_20px_rgba(8,145,178,0.6)] hover:-translate-y-1">
+            <span>GO TO LINK</span>
+            <svg class="w-5 h-5 ml-2 -mr-1 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
+        </a>
+    </div>
+
+    <form method="GET" class="max-w-lg mx-auto border-t border-slate-800 pt-8">
+        <label class="block text-left text-cyan-500 text-sm mb-1">SET URL:</label>
+        <div class="flex">
+            <input name="link" value="{{ safe_link|safe }}" class="flex-1 p-2 bg-slate-900 border-slate-700">
+            <button class="bg-slate-700 px-4 text-white hover:bg-slate-600">SAVE</button>
+        </div>
+        <p class="text-xs text-left text-slate-500 mt-2">URL processing active.</p>
+    </form>
+</div>
+{% endblock %}

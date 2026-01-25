@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <div class="mb-6">
+        <div class="flex items-center gap-3 mb-4">
+            <div class="flex gap-1">
+                <span class="w-3 h-3 bg-red-500 rounded-full animate-pulse"></span>
+                <span class="w-3 h-3 bg-red-500 rounded-full animate-pulse" style="animation-delay: 0.2s"></span>
+                <span class="w-3 h-3 bg-red-500 rounded-full animate-pulse" style="animation-delay: 0.4s"></span>
+            </div>
+            <h2 class="text-2xl text-red-400">Blacklist Renderer</h2>
+        </div>
+
+        <div class="grid grid-cols-3 gap-2 mb-4">
+            <div class="text-center p-2 bg-green-900/30 border border-green-700 rounded">
+                <div class="text-xs text-green-400">WAF</div>
+                <div class="text-green-500 text-sm font-bold">ACTIVE</div>
+            </div>
+            <div class="text-center p-2 bg-green-900/30 border border-green-700 rounded">
+                <div class="text-xs text-green-400">SANITIZE</div>
+                <div class="text-green-500 text-sm font-bold">ENABLED</div>
+            </div>
+            <div class="text-center p-2 bg-green-900/30 border border-green-700 rounded">
+                <div class="text-xs text-green-400">ESCAPE</div>
+                <div class="text-green-500 text-sm font-bold">ON</div>
+            </div>
+        </div>
+    </div>
+
+    <form method="POST" class="mb-8">
+        <label class="block text-red-500 text-sm mb-2 font-bold">INPUT DATA</label>
+        <div class="flex">
+            <input name="data" value="{{ input_data }}" class="flex-1 p-3 bg-slate-900 border-red-800 font-mono text-sm" placeholder="Enter data...">
+            <button class="bg-red-700 hover:bg-red-600 px-6 text-white font-bold ml-2">PROCESS</button>
+        </div>
+        <p class="text-xs text-slate-500 mt-2">Naive blacklist filter active</p>
+    </form>
+
+    {% if processed_result %}
+    <div class="bg-black/50 border {% if 'BLOCKED' in processed_result %}border-red-700{% else %}border-red-900{% endif %} p-6 rounded-lg">
+        <div class="text-red-600 text-xs font-mono mb-2">// PROCESSED RESULT</div>
+        <div class="text-white font-mono text-sm break-words">{{ processed_result }}</div>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

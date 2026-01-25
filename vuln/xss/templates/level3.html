@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="text-center py-12">
+    <div class="inline-block p-6 border border-cyan-500/30 rounded-full mb-6">
+    </div>
+    <h2 class="text-3xl mb-2 text-white font-light">URL PROCESSOR</h2>
+    <p class="text-slate-400 mb-8">Processing URL parameters...</p>
+
+    <div id="data-display" class="hidden p-6 bg-cyan-900/20 border border-cyan-500/50 rounded text-xl text-cyan-300"></div>
+</div>
+
+<script>
+    setTimeout(() => {
+        var hash = decodeURIComponent(window.location.hash.substring(1));
+        var display = document.getElementById('data-display');
+
+        if (hash) {
+            display.classList.remove('hidden');
+            display.innerHTML = "Data: " + hash;
+        }
+    }, 500);
+</script>
+{% endblock %}

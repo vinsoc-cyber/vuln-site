@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-md mx-auto">
+    <h2 class="text-2xl mb-6 text-red-400 text-center">Attribute Traversal</h2>
+
+    <form method="GET" class="mb-8">
+        <label class="block text-red-500 text-sm mb-2 font-bold">PROFILE ID</label>
+        <div class="flex">
+            <input name="id" value="{{ profile_id }}" class="flex-1 p-3 bg-slate-900 border-red-800 font-mono" placeholder="guest">
+            <button class="bg-red-700 px-6 text-white font-bold ml-2">LOAD</button>
+        </div>
+        <label class="block text-red-500 text-sm mb-2 font-bold mt-4">FIELD (template expression)</label>
+        <input name="field" value="{{ field }}" class="w-full p-3 bg-slate-900 border-red-800 font-mono" placeholder="name">
+    </form>
+
+    <div>{{ display_html|safe }}</div>
+
+    {% if success_detected %}
+    <div class="mt-6 p-4 border-2 border-green-500 bg-green-900/30 text-green-400 font-bold text-xl animate-pulse">
+        CONGRATULATIONS! Object attribute access successful!
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

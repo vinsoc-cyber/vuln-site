@@ -1,0 +1,53 @@
+version: "3.9"
+
+services:
+  sqli:
+    build:
+      context: .
+    command: ["python", "vuln/sqli/vuln_sqli.py"]
+    ports:
+      - "1111:1111"
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /var/tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    init: true
+    restart: unless-stopped
+
+  xss:
+    build:
+      context: .
+    command: ["python", "vuln/xss/vuln_xss.py"]
+    ports:
+      - "1112:1112"
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /var/tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    init: true
+    restart: unless-stopped
+
+  ssti:
+    build:
+      context: .
+    command: ["python", "vuln/ssti/vuln_ssti.py"]
+    ports:
+      - "1113:1113"
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /var/tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    init: true
+    restart: unless-stopped

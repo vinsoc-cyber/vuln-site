@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="text-center mb-6">
+    <form method="GET" class="inline-flex shadow-lg">
+        <span class="p-2 border border-amber-800 bg-amber-900/50">ID:</span>
+        <input name="id" value="{{ id_param }}" class="w-24 p-2 text-center bg-slate-900 border-amber-800">
+        <button class="bg-amber-700 px-4 py-2 text-black font-bold">GO</button>
+    </form>
+</div>
+{% if show_congrats %}
+<div class="mb-4 p-4 border-2 border-green-500 bg-green-900/30 text-green-400 font-bold text-xl animate-pulse">
+     CONGRATULATIONS! SQL Injection successful - all data extracted! 
+</div>
+{% endif %}
+<div class="grid grid-cols-2 gap-4">
+    {% for item in items %}
+    <div class="border border-amber-800 p-4">
+        <h3 class="font-bold text-white">{{ item['name'] }}</h3>
+        <div class="text-amber-500">{{ item['price'] }} $</div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

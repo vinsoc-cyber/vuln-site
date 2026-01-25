@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<form method="GET" class="mb-8">
+    <label class="block mb-2 text-xl text-cyan-300">SEARCH SYSTEM:</label>
+    <div class="flex gap-0 shadow-lg">
+        <span class="bg-cyan-900/50 text-cyan-300 p-3 font-mono border border-r-0 border-cyan-700">search://</span>
+        <input type="text" name="q" value="Guest" class="flex-1 p-3 text-lg bg-slate-900/80 border-cyan-700" placeholder="Enter query...">
+        <button class="bg-cyan-600 text-white px-8 py-2 font-bold hover:bg-cyan-500 transition shadow-[0_0_15px_rgba(8,145,178,0.5)]">SEARCH</button>
+    </div>
+</form>
+<div class="mt-8 border-t border-dashed border-cyan-800 pt-6">
+    <div class="text-xs text-cyan-600 mb-2 font-mono uppercase">Output:</div>
+    <div class="text-3xl text-white break-words font-light">Results for: <span class="text-cyan-300">{{ query|safe }}</span></div>
+</div>
+{% endblock %}

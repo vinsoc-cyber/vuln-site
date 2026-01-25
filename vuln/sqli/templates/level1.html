@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<form method="POST" class="max-w-md mx-auto mt-10">
+    <label class="block text-amber-500 mb-1 font-bold">USERNAME</label>
+    <input type="text" name="username" class="w-full p-2 mb-4 rounded" placeholder="admin">
+    <label class="block text-amber-500 mb-1 font-bold">PASSWORD</label>
+    <input type="password" name="password" class="w-full p-2 mb-6 rounded" placeholder="******">
+    <button class="bg-amber-600 text-black px-6 py-2 font-bold w-full hover:bg-amber-500">LOGIN</button>
+</form>
+<div class="mt-8 text-center">{{ msg|safe }}</div>
+{% endblock %}

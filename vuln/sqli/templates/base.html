@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Management System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Source+Code+Pro:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Rajdhani', sans-serif; background-color: #020617; color: #fbbf24; background-image: linear-gradient(rgba(245, 158, 11, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(245, 158, 11, 0.1) 1px, transparent 1px); background-size: 40px 40px; }
+        .mono-font { font-family: 'Source Code Pro', monospace; }
+        .holo-text { text-shadow: 0 0 5px #f59e0b, 0 0 10px #f59e0b; }
+        .holo-box { background: rgba(69, 26, 3, 0.6); border: 1px solid #f59e0b; box-shadow: 0 0 15px rgba(245, 158, 11, 0.2), inset 0 0 20px rgba(245, 158, 11, 0.1); backdrop-filter: blur(4px); }
+        input, textarea, select { background-color: #0f172a; color: #fcd34d; border: 1px solid #92400e; font-family: 'Source Code Pro', monospace; }
+        input:focus { outline: none; border-color: #f59e0b; box-shadow: 0 0 10px #f59e0b; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-thumb { background: #b45309; border-radius: 4px; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col overflow-x-hidden">
+    <nav class="bg-slate-950/90 border-b border-amber-800 p-4 sticky top-0 z-50 backdrop-blur-md">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="/" class="text-3xl font-bold holo-text tracking-widest">[DATA_SYSTEM]</a>
+            <a href="/reset" class="text-red-400 border border-red-900/50 bg-red-900/20 px-4 py-1 rounded hover:shadow-[0_0_10px_rgba(248,113,113,0.5)]">RESET</a>
+        </div>
+    </nav>
+    <div class="container mx-auto flex-grow flex flex-col md:flex-row mt-8 gap-6 px-4 mb-10">
+        <aside class="md:w-72 flex-shrink-0">
+            <div class="holo-box p-5 rounded-lg h-full">
+                <h3 class="text-amber-300 uppercase text-sm font-bold mb-4 border-b border-amber-800 pb-2">Operations</h3>
+                <div class="space-y-1">
+                {% for i in range(1, 11) %}
+                <a href="/level{{i}}" class="block px-3 py-2 text-sm rounded transition-all duration-200 mono-font {{ 'bg-amber-900/50 text-white border-l-4 border-amber-500' if active_level == i else 'text-slate-400 hover:text-amber-200 hover:bg-amber-900/20' }}">
+                    Level {{ '%02d' % i }} :: {{ titles[i-1] }}
+                </a>
+                {% endfor %}
+                </div>
+            </div>
+        </aside>
+        <main class="flex-1 relative">
+            <div class="mb-6">
+                <h1 class="text-5xl font-bold text-white drop-shadow-[0_0_5px_rgba(255,255,255,0.5)]">{{ current_title }}</h1>
+                <p class="text-slate-300 mono-font border-l-2 border-amber-600 pl-4 py-1 mt-4 bg-gradient-to-r from-amber-900/20 to-transparent">
+                    <span class="text-amber-500 font-bold">Status:</span> {{ description }}
+                </p>
+            </div>
+            <div class="holo-box p-8 min-h-[400px] relative rounded-lg overflow-hidden flex flex-col">
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+    </div>
+
+    <footer class="bg-slate-950 border-t border-amber-900 text-center p-6 text-slate-600 text-xs mt-auto mono-font">
+        © sondt (Administrator) // All Rights Reserved
+    </footer>
+</body>
+</html>

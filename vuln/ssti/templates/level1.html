@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <h2 class="text-2xl mb-4 text-red-400">Variable Renderer</h2>
+    <p class="text-slate-400 mb-6">Enter your name to be rendered in the template.</p>
+
+    <form method="POST" class="mb-8">
+        <div class="flex gap-0 shadow-lg">
+            <span class="bg-red-900/50 text-red-300 p-3 font-mono border border-r-0 border-red-800">var://</span>
+            <input type="text" name="template" value="{{ user_input }}" class="flex-1 p-3 text-lg bg-slate-900/80 border-red-800" placeholder="Enter your name...">
+            <button class="bg-red-600 text-white px-8 py-2 font-bold hover:bg-red-500 transition shadow-[0_0_15px_rgba(185,28,28,0.5)]">RENDER</button>
+        </div>
+    </form>
+
+    {% if rendered_output %}
+    <div class="border-t border-dashed border-red-800 pt-6">
+        <div class="text-xs text-red-600 mb-2 font-mono uppercase">Rendered Output:</div>
+        <div class="text-2xl text-white break-words font-light">{{ rendered_output }}</div>
+    </div>
+    {% endif %}
+
+    {% if success_detected %}
+    <div class="mt-6 p-4 border-2 border-green-500 bg-green-900/30 text-green-400 font-bold text-xl animate-pulse">
+        CONGRATULATIONS! Template Injection successful - special characters rendered!
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

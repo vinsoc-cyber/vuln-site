@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="text-center py-10">
+    <div id="status-box" class="text-4xl font-bold font-mono text-green-400 mb-4">Initializing...</div>
+    <div class="text-slate-500">System Status</div>
+</div>
+<script>
+    var systemStatus = '{{ safe_payload|safe }}';
+
+    document.getElementById('status-box').innerText = "STATUS: " + systemStatus;
+</script>
+
+<form method="GET" class="mt-8 text-center border-t border-slate-800 pt-8">
+    <input name="p" value="{{ safe_payload|safe }}" class="w-64 p-2 bg-slate-900 border-slate-700 rounded text-center">
+    <button class="ml-2 bg-cyan-700 text-white px-4 py-2 rounded">UPDATE</button>
+</form>
+{% endblock %}

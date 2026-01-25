@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+{% if blocked_msg %}
+{{ blocked_msg|safe }}
+{% else %}
+<div class="max-w-lg mx-auto">
+    <div class="mb-4 text-red-400 text-center border border-red-900/50 p-2">Security: Input filtering enabled</div>
+    <form method="GET" class="flex gap-2">
+        <input type="text" name="q" value="{{ search }}" class="flex-1 p-2 bg-slate-900 border-amber-800" placeholder="Search">
+        <button class="bg-amber-600 px-4 font-bold text-black">SEARCH</button>
+    </form>
+    {% if show_flag_congrats %}
+    <div class="mb-4 p-4 border-2 border-green-500 bg-green-900/30 text-green-400 font-bold text-xl animate-pulse">
+         CONGRATULATIONS! FLAG successfully extracted despite security filtering! 
+    </div>
+    {% endif %}
+    <ul class="mt-6 space-y-2 font-mono text-amber-200">
+        {% for r in results %}
+        <li class="p-2 bg-slate-900/50">{{ r[0] }} - {{ r[1] }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+{% endblock %}

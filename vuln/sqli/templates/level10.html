@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="text-center max-w-lg mx-auto">
+    <h2 class="text-2xl mb-4 text-red-500 font-bold">SYSTEM CONFIGURATION</h2>
+    <form method="POST">
+        <input name="id" class="w-full p-3 mb-2 bg-slate-900 border-red-900" placeholder="Configuration ID">
+        <button class="bg-red-700 text-white w-full py-3 font-bold">EXECUTE</button>
+    </form>
+    <div class="mt-8 border p-4 border-amber-900 bg-black/80 min-h-[60px] flex items-center justify-center">{{ msg|safe }}</div>
+</div>
+{% endblock %}
