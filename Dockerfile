@@ -14,5 +14,3 @@ COPY --chown=app:app vuln ./vuln
 USER app
 
 EXPOSE 1111 1112 1113
-
-CMD ["python", "vuln/sqli/vuln_sqli.py"]
