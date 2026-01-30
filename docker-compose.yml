@@ -1,10 +1,21 @@
 version: "3.9"
 
 services:
+
+  cloudflared:
+    image: cloudflare/cloudflared
+    container_name: cloudflare-tunnel
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run
+    environment:
+      - TUNNEL_TOKEN=$TUNNEL_TOKEN
+    networks:
+      - cloudflared
+
   sqli:
     build:
       context: .
-    command: ["python", "vuln/sqli/vuln_sqli.py"]
+    command: [ "python", "vuln/sqli/vuln_sqli.py" ]
     ports:
       - "1111:1111"
     read_only: true
@@ -17,11 +28,13 @@ services:
       - ALL
     init: true
     restart: unless-stopped
+    networks:
+      - cloudflared
 
   xss:
     build:
       context: .
-    command: ["python", "vuln/xss/vuln_xss.py"]
+    command: [ "python", "vuln/xss/vuln_xss.py" ]
     ports:
       - "1112:1112"
     read_only: true
@@ -34,11 +47,13 @@ services:
       - ALL
     init: true
     restart: unless-stopped
+    networks:
+      - cloudflared
 
   ssti:
     build:
       context: .
-    command: ["python", "vuln/ssti/vuln_ssti.py"]
+    command: [ "python", "vuln/ssti/vuln_ssti.py" ]
     ports:
       - "1113:1113"
     read_only: true
@@ -51,3 +66,8 @@ services:
       - ALL
     init: true
     restart: unless-stopped
+    networks:
+      - cloudflared
+
+networks:
+  cloudflared:
