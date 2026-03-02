@@ -69,5 +69,29 @@ services:
     networks:
       - cloudflared
 
+  dvwa:
+    image: ghcr.io/digininja/dvwa:eba982f
+    container_name: dvwa
+    ports:
+      - "2111:80"
+    restart: unless-stopped
+
+  juice-shop:
+    image: bkimminich/juice-shop:v19.1.1
+    container_name: juice-shop
+    ports:
+      - "2112:3000"
+    restart: unless-stopped
+
+  webgoat:
+    image: webgoat/webgoat:v2025.3
+    container_name: webgoat
+    ports:
+      - "2113:8080"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+    restart: unless-stopped
+
+
 networks:
   cloudflared:
