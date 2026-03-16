@@ -3,7 +3,9 @@ import json
 import re
 import urllib.parse
 
-from flask import redirect, render_template, request
+import secrets as _secrets
+
+from flask import make_response, redirect, render_template, request
 
 import db
 
@@ -18,14 +20,14 @@ TITLES = [
     "Security Scanner",
     "Template Engine",
     "API Dashboard",
-    "Entity Decoder",
+    "CSP Eval Gate",
     "Guestbook Sanitizer",
-    "DOM Stream",
+    "CSP Nonce Vault",
     "Template Literal",
     "Script Breakout",
     "Deferred Command",
-    "Embedded Doc",
-    "Eval Console",
+    "CSP CDN Gateway",
+    "CSP Dynamic Loader",
     "Protocol Filter",
     "LocalStorage Vault",
 ]
@@ -153,9 +155,14 @@ def register_routes(app):
     @app.route("/level11")
     def level11():
         query = request.args.get("q", "")
-        escaped = html.escape(query)
-        preview = html.unescape(escaped)
-        return render_page(11, "Entity decoder active.", "level11.html", query=query, preview=preview)
+        nonce = _secrets.token_hex(8)
+        resp = make_response(
+            render_page(11, "CSP eval gate active.", "level11.html", query=query, nonce=nonce)
+        )
+        resp.headers["Content-Security-Policy"] = (
+            f"script-src 'self' 'unsafe-eval' 'nonce-{nonce}' https://cdn.tailwindcss.com;"
+        )
+        return resp
 
     @app.route("/level12", methods=["GET", "POST"])
     def level12():
@@ -178,7 +185,13 @@ def register_routes(app):
 
     @app.route("/level13")
     def level13():
-        return render_page(13, "DOM stream processing active.", "level13.html")
+        nonce = "8f4e2a1b"  # deliberately predictable — leaked nonce is the vuln
+        query = request.args.get("q", "")
+        resp = make_response(
+            render_page(13, "CSP nonce vault active.", "level13.html", query=query, nonce=nonce)
+        )
+        resp.headers["Content-Security-Policy"] = f"script-src 'nonce-{nonce}' https://cdn.tailwindcss.com;"
+        return resp
 
     @app.route("/level14")
     def level14():
@@ -198,14 +211,26 @@ def register_routes(app):
 
     @app.route("/level17")
     def level17():
-        doc = request.args.get("doc", "Welcome <b>Operator</b>")
-        safe_doc = re.sub(r"(?i)<script.*?>.*?</script>", "[BLOCKED]", doc)
-        safe_doc = re.sub(r"(?i)<script", "[BLOCKED]", safe_doc)
-        return render_page(17, "Embedded document active.", "level17.html", doc=safe_doc)
+        query = request.args.get("q", "")
+        resp = make_response(
+            render_page(17, "CSP CDN gateway active.", "level17.html", query=query)
+        )
+        resp.headers["Content-Security-Policy"] = (
+            "script-src 'self' https://cdnjs.cloudflare.com https://cdn.tailwindcss.com;"
+        )
+        return resp
 
     @app.route("/level18")
     def level18():
-        return render_page(18, "Eval console active.", "level18.html")
+        nonce = _secrets.token_hex(8)
+        callback = request.args.get("cb", "handleData")
+        resp = make_response(
+            render_page(18, "CSP dynamic loader active.", "level18.html", callback=callback, nonce=nonce)
+        )
+        resp.headers["Content-Security-Policy"] = (
+            f"script-src 'nonce-{nonce}' 'strict-dynamic' https://cdn.tailwindcss.com;"
+        )
+        return resp
 
     @app.route("/level19")
     def level19():

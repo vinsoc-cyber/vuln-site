@@ -1,17 +1,27 @@
 {% extends "base.html" %}
+{% block extra_head %}
+<style>.secure-badge { border: 1px solid #10b981; color: #10b981; padding: 2px 8px; font-size: 0.7em; }</style>
+{% endblock %}
 {% block content %}
 <div class="max-w-2xl mx-auto">
-    <h2 class="text-2xl text-cyan-400 mb-4">DOM Stream</h2>
-    <div class="text-sm text-slate-500 mb-4">Stream events are rendered directly from the URL.</div>
-    <div id="stream" class="space-y-2"></div>
+    <div class="mb-4">
+        <span class="secure-badge">CSP: ACTIVE</span>
+        <span class="secure-badge">NONCE: REQUIRED</span>
+    </div>
+    <!-- Debug: nonce={{ nonce }} -->
+    <h2 class="text-2xl text-cyan-400 mb-4">CSP Nonce Vault</h2>
+    <form method="GET" class="flex gap-2">
+        <input name="q" value="{{ query }}" class="flex-1 p-2 bg-slate-900 border-cyan-700 font-mono" placeholder="Enter search query" data-nonce="{{ nonce }}">
+        <button class="bg-cyan-600 text-white px-6 font-bold">SEARCH</button>
+    </form>
 
-    <div class="mt-6 text-slate-500 text-sm">Try: <span class="font-mono text-cyan-400">?msg=test</span></div>
+    <div class="mt-6 border border-cyan-900/50 bg-slate-900/40 p-4">
+        <div class="text-xs text-cyan-600 font-mono mb-2">Result</div>
+        <div class="text-white text-xl break-words">{{ query|safe }}</div>
+    </div>
+
+    <script nonce="{{ nonce }}">
+        console.log("Nonce-protected script loaded.");
+    </script>
 </div>
-
-<script>
-    var params = new URLSearchParams(window.location.search);
-    var msg = params.get('msg') || 'stream ready';
-    var stream = document.getElementById('stream');
-    stream.insertAdjacentHTML('beforeend', '<div class="p-3 bg-slate-900/50 border border-cyan-900/40 text-white">' + msg + '</div>');
-</script>
 {% endblock %}

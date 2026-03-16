@@ -1,19 +1,33 @@
 {% extends "base.html" %}
+{% block extra_head %}
+<style>.secure-badge { border: 1px solid #10b981; color: #10b981; padding: 2px 8px; font-size: 0.7em; }</style>
+{% endblock %}
 {% block content %}
 <div class="max-w-2xl mx-auto">
-    <h2 class="text-2xl text-cyan-400 mb-4">Eval Console</h2>
-    <div class="bg-slate-900/50 border border-cyan-900/40 p-4">
+    <div class="mb-4">
+        <span class="secure-badge">CSP: ACTIVE</span>
+        <span class="secure-badge">STRICT-DYNAMIC: ON</span>
+    </div>
+    <h2 class="text-2xl text-cyan-400 mb-4">CSP Dynamic Loader</h2>
+    <form method="GET" class="flex gap-2">
+        <input name="cb" value="{{ callback }}" class="flex-1 p-2 bg-slate-900 border-cyan-700 font-mono" placeholder="Callback name">
+        <button class="bg-cyan-600 text-white px-6 font-bold">LOAD</button>
+    </form>
+
+    <div class="mt-6 border border-cyan-900/50 bg-slate-900/40 p-4">
         <div class="text-xs text-cyan-600 font-mono mb-2">Result</div>
-        <div id="result" class="text-white text-xl">Waiting...</div>
+        <div id="result" class="text-white text-xl break-words">Loading...</div>
     </div>
 
-    <div class="mt-6 text-slate-500 text-sm">Try: <span class="font-mono text-cyan-400">?calc=test</span></div>
-</div>
+    <script nonce="{{ nonce }}">
+        var cb = "{{ callback|safe }}";
+        var s = document.createElement('script');
+        s.textContent = cb + '({"status":"ok"})';
+        document.body.appendChild(s);
 
-<script>
-    var params = new URLSearchParams(window.location.search);
-    var expr = params.get('calc') || '1 + 1';
-    var output = eval(expr);
-    document.getElementById('result').innerText = output;
-</script>
+        function handleData(data) {
+            document.getElementById('result').textContent = JSON.stringify(data);
+        }
+    </script>
+</div>
 {% endblock %}

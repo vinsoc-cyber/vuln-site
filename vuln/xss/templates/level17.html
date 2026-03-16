@@ -1,12 +1,24 @@
 {% extends "base.html" %}
+{% block extra_head %}
+<style>.secure-badge { border: 1px solid #10b981; color: #10b981; padding: 2px 8px; font-size: 0.7em; }</style>
+{% endblock %}
 {% block content %}
-<div class="max-w-3xl mx-auto">
-    <h2 class="text-2xl text-cyan-400 mb-4">Embedded Document</h2>
-    <form method="GET" class="flex gap-2 mb-6">
-        <input name="doc" value="{{ doc }}" class="flex-1 p-2 bg-slate-900 border-cyan-700" placeholder="HTML for srcdoc">
-        <button class="bg-cyan-600 text-white px-6 font-bold">LOAD</button>
+<div class="max-w-2xl mx-auto">
+    <div class="mb-4">
+        <span class="secure-badge">CSP: ACTIVE</span>
+        <span class="secure-badge">CDN: WHITELISTED</span>
+    </div>
+    <h2 class="text-2xl text-cyan-400 mb-4">CSP CDN Gateway</h2>
+    <form method="GET" class="flex gap-2">
+        <input name="q" value="{{ query }}" class="flex-1 p-2 bg-slate-900 border-cyan-700 font-mono" placeholder="Enter search query">
+        <button class="bg-cyan-600 text-white px-6 font-bold">SEARCH</button>
     </form>
 
-    <iframe class="w-full h-64 border border-cyan-900/40 bg-black" srcdoc="{{ doc|safe }}"></iframe>
+    <div class="mt-6 border border-cyan-900/50 bg-slate-900/40 p-4">
+        <div class="text-xs text-cyan-600 font-mono mb-2">Result</div>
+        <div class="text-white text-xl break-words">{{ query|safe }}</div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
 </div>
 {% endblock %}
